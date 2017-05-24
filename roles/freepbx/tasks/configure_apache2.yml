@@ -1,0 +1,25 @@
+---
+
+  - name: httpd | Set apache2 to use asterisk for user/group
+    replace:
+      dest   : '/etc/apache2/apache2.conf'
+      regexp : '^(User|Group).*'
+      replace: '\1 asterisk'
+    notify:
+      - restart apache2
+
+  - name: apache2 | Modifications to run asterisk
+    replace:
+      dest   : '/etc/php5/apache2/php.ini'
+      regexp : '(\s+)?^upload_max_filesize(\s+)?=(\s+.*)?$'
+      replace: '\1upload_max_filesize\2=120M'
+    notify:
+      - restart apache2
+
+  - name: httpd | AllowOverride = all
+    replace:
+      dest   : '/etc/apache2/apache2.conf'
+      regexp : '(<[dD]irectory /var/www/>[^<]*)AllowOverride None'
+      replace: '\1AllowOverride All'
+    notify:
+      - restart apache2

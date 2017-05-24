@@ -1,0 +1,19 @@
+---
+
+  - name: Perform Asterisk 13 and deps installation/compilation
+    include: install.yml
+
+  - name: Install Asterisk additional russian sounds
+    include: sounds.yml
+
+  - name: Configure local MySQL
+    include: mysql_configure.yml
+
+  - name: Configure Permissions
+    include: permissions.yml
+
+  - name: Configure apache2
+    include: configure_apache2.yml
+
+  - name: Install and configure FreePBX
+    include: freepbx_install.yml

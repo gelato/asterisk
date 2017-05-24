@@ -1,0 +1,39 @@
+---
+  - name: FreePBX install playbook
+    hosts: main
+    become: True
+    vars_files:
+      - "vars/freepbx/freepbx.yml"
+    roles:
+
+      - role: mysql
+        tags:
+          - mysql_role
+        mysql_user_home: /root
+        mysql_root_password: ''
+        mysql_root_password_update: yes
+        mysql_enabled_on_startup: yes
+        overwrite_global_mycnf: yes
+        mysql_port: "3306"
+        mysql_bind_address: '0.0.0.0'
+        mysql_datadir: /var/lib/mysql
+        mysql_log: ""
+        mysql_log_error: /var/log/mysqld.log
+        mysql_syslog_tag: mysqld
+        mysql_slow_query_log_enabled: no
+        mysql_slow_query_log_file: /var/log/mysql-slow.log
+        mysql_slow_query_time: 2
+        mysql_key_buffer_size: "256M"
+        mysql_max_allowed_packet: "64M"
+        mysql_table_open_cache: "256"
+
+      - role: apache2
+        tags:
+          - apache2_role
+        apache_listen_ip: "*"
+        apache_listen_port: 80
+        apache_listen_port_ssl: 443
+        
+      - role: freepbx
+        tags:
+          - freepbx_role

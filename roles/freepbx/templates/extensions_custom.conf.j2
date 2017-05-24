@@ -1,0 +1,450 @@
+#include support_incoming.conf
+#include support_outgoing.conf
+
+[general]
+static = yes
+writeprotect = no
+;autofallthrough=no
+clearglobalvars = no
+
+[globals]
+CONSOLE = Console/dsp  ; Console interface for demo
+;CONSOLE=Zap/1
+;CONSOLE=Phone/phone0
+IAXINFO = guest  ; IAXtel username/password
+;IAXINFO=myuser:mypass
+TRUNK = Zap/G2  ; Trunk interface
+
+TRUNKMSD = 1  ; MSD digits to strip (usually 1 or 0)
+gsm_1 = SIP/gsm1
+gsm_2 = SIP/gsm2
+gsm_3 = SIP/gsm3
+gsm_4 = SIP/gsm4
+gsm_5 = SIP/gsm5
+gsm_6 = SIP/gsm6
+gsm_7 = SIP/gsm7
+gsm_8 = SIP/gsm8
+gsm_9 = SIP/gsm9
+gsm_10 = SIP/gsm10
+gsm_11 = SIP/gsm11
+gsm_12 = SIP/gsm12
+gsm_13 = SIP/gsm13
+gsm_14 = SIP/gsm14
+gsm_15 = SIP/gsm15
+gsm_16 = SIP/gsm16
+gsm_17 = SIP/gsm17
+gsm_18 = SIP/gsm18
+gsm_19 = SIP/gsm19
+gsm_20 = SIP/gsm20
+gsm_21 = SIP/gsm21
+gsm_22 = SIP/gsm22
+gsm_23 = SIP/gsm23
+gsm_24 = SIP/gsm24
+sip_1 = SIP/s1
+sip_2 = SIP/s2
+sip_3 = SIP/s3
+
+AsteriskDB_User=asterisk
+AsteriskDB_Pass=Aa45404540
+AsteriskDB_Db=asterisk
+AsteriskDB_Host=127.0.0.1
+
+
+;;
+;;TIMEBASED RULES
+;;
+
+[timebasedrules]
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;INCOMING FROM TRUNKS;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+[DID_Incoming]
+exten = s,1,NoOp()
+exten = s,2,Goto(voicemenu-incoming,s,1)
+
+exten = s/_[2-79]XXXXX,1,Set(CALLERID(num)=+380652${CALLERID(num)})
+exten = s/_[2-79]XXXXX,2,Goto(voicemenu-incoming,s,1)
+
+exten = s/_00XXXXXXXXX.,1,Set(CALLERID(num)=+${CALLERID(num):2})
+exten = s/_00XXXXXXXXX.,2,Goto(voicemenu-incoming,s,1)
+
+;;
+;;VOICE MENUS
+;;
+
+[voicemenu-voicemail]
+exten = s,1,Answer
+exten = s,n,Wait(1)
+exten = s,n,PlayTones(ring)
+exten = s,n,Wait(5)
+exten = s,n,StopPlayTones
+exten = s,n,Wait(2)
+exten = s,n,VoiceMailMain(${CALLERID(num)})
+exten = s,n,Hangup
+
+[voicemenu-noservice]
+;alias_exten = 
+exten = s,1,Answer
+exten = s,n,Wait(1)
+exten = s,n,Zapateller
+exten = s,n,Zapateller
+exten = s,n,Playback(ss-noservice)
+exten = s,n,Hangup
+
+[voicemenu-incoming]
+;exten = s,1,GotoIfTime(09:00-17:45,wed-thu,*,*?101)
+;exten = s,1,GotoIfTime(09:00-17:45,mon-thu,*,*?101)
+;exten = s,n,GotoIfTime(09:00-16:45,thu,*,*?101)
+;exten = s,n,GotoIfTime(09:00-16:40,fri,*,*?101)
+;exten = s,n,GotoIfTime(08:00-20:00,sut-sun,*,*?101)
+;exten = s,n,Goto(201)
+;exten = s,1,Goto(201)
+
+exten = s,1,Answer()
+exten = s,n,Wait(1)
+exten = s,n,Playback(custom/close_all)
+exten = s,n,Hangup()
+
+exten = s,101,Answer()
+exten = s,102,Wait(1)
+exten = s,103,Playback(custom/privetstvie)
+exten = s,104,Wait(1)
+exten = s,105,Playback(custom/spasibo)
+exten = s,106,Wait(1)
+exten = s,107,Playback(custom/ozhidayte)
+exten = s,108,Wait(1)
+exten = s,109,ResetCDR()
+exten = s,110,Set(CHANNEL(language)=ru)
+exten = s,111,Set(CALLFILENAME=${STRFTIME(${EPOCH},,%Y%m%d%H%M)}-${CALLERID(num)})
+exten = s,112,Set(CDR(filename)=${CALLFILENAME}.wav)
+exten = s,113,Set(MONITOR_FILENAME=${CALLFILENAME})
+exten = s,114,Queue(queue-operators)
+
+;exten = s,201,Hangup()
+
+exten = s,201,Wait(2)
+exten = s,202,Playback(custom/closed)
+exten = s,203,Wait(1)
+exten = s,204,Hangup()
+
+
+[DID_Incoming_Play]
+exten = s,1,Wait(2)
+exten = s,n,Playback(custom/nomera)
+exten = s,n,Wait(1)
+exten = s,n,Hangup()
+
+;;
+;;GROUPS
+;;
+
+;;
+;;ADDITIONAL FUNCTIONS
+;;
+
+;;
+;;ADDITIONAL DIALPLANS
+;;
+
+[blf]
+exten = 6000,hint,SIP/6000
+exten = 6001,hint,SIP/6001
+exten = 6002,hint,SIP/6002
+exten = 6003,hint,SIP/6003
+exten = 6004,hint,SIP/6004
+exten = 6005,hint,SIP/6005
+exten = 6006,hint,SIP/6006
+exten = 6007,hint,SIP/6007
+exten = 6008,hint,SIP/6008
+exten = 6009,hint,SIP/6009
+exten = 6010,hint,SIP/6010
+exten = 6011,hint,SIP/6011
+exten = 6012,hint,SIP/6012
+exten = 6013,hint,SIP/6013
+exten = 6014,hint,SIP/6014
+exten = 6015,hint,SIP/6015
+exten = 6016,hint,SIP/6016
+exten = 6017,hint,SIP/6017
+exten = 6018,hint,SIP/6018
+exten = 6019,hint,SIP/6019
+exten = 6020,hint,SIP/6020
+
+;;
+;;OUTGOING DIALPLANS
+;;
+
+[numberplan-crm]
+exten = _[+0-9a-zA-Z].,1,Set(CALLFILENAME=${STRFTIME(${EPOCH},,%Y%m%d%H%M)}-${EXTEN}.wav)
+exten = _[+0-9a-zA-Z].,n,Set(CDR(filename)=${CALLFILENAME})
+exten = _[+0-9a-zA-Z].,n,MixMonitor(/home/RECORDS/${CALLFILENAME})
+exten = _[+0-9a-zA-Z].,n,Goto(numberplan-outgoing,${EXTEN},1)
+; INVALID
+exten = s,1,Answer
+exten = s,n,Wait(1)
+exten = s,n,Playback(ru/invalid)
+exten = s,n,Hangup()
+
+[numberplan-outgoing]
+include = blf
+exten = failed,1,Hangup()
+exten = _X.,1,Goto(dialout-outgoing,${EXTEN:0},1)
+exten = _+X.,1,Goto(dialout-outgoing,${EXTEN:0},1)
+exten = _8800XXXXXXX,1,Goto(dialout-outgoing,${EXTEN:0},1)
+exten = _8XXXXXXXXXX,1,Goto(dialout-outgoing,+7${EXTEN:1},1)
+exten = _7XXXXXXXXXX,1,Goto(dialout-outgoing,+${EXTEN:0},1)
+exten = _380XXXXXXXXX,1,Goto(dialout-outgoing,+${EXTEN:0},1)
+
+[dialout-outgoing]
+
+exten = 205,1,Wait(2)
+exten = 205,n,Playback(custom/closed1)
+exten = 205,n,Wait(1)
+exten = 205,n,Hangup()
+
+include = default
+; LOCAL and TRANSFER
+exten = _60XX,1,GotoIf($["${CALLFILENAME}" = ""]?14)
+exten = _60XX,2,Set(REFERRER=${DIALEDPEERNUMBER})
+exten = _60XX,3,Dial(SIP/${EXTEN},30,grmtM(forwardedmonitor,${CALLFILENAME}.wav))
+exten = _60XX,4,GotoIf($["${DIALSTATUS}" = "NOANSWER"]?11)
+exten = _60XX,5,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?11)
+exten = _60XX,6,GotoIf($["${DIALSTATUS}" = "BUSY"]?11)
+exten = _60XX,7,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?11)
+exten = _60XX,8,GotoIf($["${DIALSTATUS}" = "CANCEL"]?11)
+exten = _60XX,9,GotoIf($["${DIALSTATUS}" = "DONTCALL"]?11)
+exten = _60XX,10,Hangup()
+exten = _60XX,11,Wait(1)
+exten = _60XX,12,Dial(SIP/${REFERRER},60,rmtM(forwardedmonitor,${CALLFILENAME}.wav))
+exten = _60XX,13,Hangup()
+exten = _60XX,14,Dial(SIP/${EXTEN},60,rTt)
+exten = _60XX,15,Hangup()
+; MTS KRASNODAR
+exten = _+7978[078]XXXXXX,1,Dial(${gsm_18}/18${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,2,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?5)
+exten = _+7978[078]XXXXXX,3,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?5)
+exten = _+7978[078]XXXXXX,4,Hangup()
+exten = _+7978[078]XXXXXX,5,Dial(${gsm_17}/17${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,6,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?9)
+exten = _+7978[078]XXXXXX,7,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?9)
+exten = _+7978[078]XXXXXX,8,Hangup()
+exten = _+7978[078]XXXXXX,9,Dial(${gsm_16}/16${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,10,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?13)
+exten = _+7978[078]XXXXXX,11,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?13)
+exten = _+7978[078]XXXXXX,12,Hangup()
+exten = _+7978[078]XXXXXX,13,Dial(${gsm_15}/15${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,14,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?17)
+exten = _+7978[078]XXXXXX,15,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?17)
+exten = _+7978[078]XXXXXX,16,Hangup()
+exten = _+7978[078]XXXXXX,17,Dial(${gsm_14}/14${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,18,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?21)
+exten = _+7978[078]XXXXXX,19,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?21)
+exten = _+7978[078]XXXXXX,20,Hangup()
+exten = _+7978[078]XXXXXX,21,Dial(${gsm_13}/13${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,22,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?25)
+exten = _+7978[078]XXXXXX,23,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?25)
+exten = _+7978[078]XXXXXX,24,Hangup()
+exten = _+7978[078]XXXXXX,25,Dial(${gsm_12}/12${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,26,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?29)
+exten = _+7978[078]XXXXXX,27,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?29)
+exten = _+7978[078]XXXXXX,28,Hangup()
+exten = _+7978[078]XXXXXX,29,Dial(${gsm_11}/11${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,30,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?33)
+exten = _+7978[078]XXXXXX,31,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?33)
+exten = _+7978[078]XXXXXX,32,Hangup()
+exten = _+7978[078]XXXXXX,33,Dial(${gsm_10}/10${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,34,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?37)
+exten = _+7978[078]XXXXXX,35,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?37)
+exten = _+7978[078]XXXXXX,36,Hangup()
+exten = _+7978[078]XXXXXX,37,Dial(${gsm_9}/9${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,38,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?41)
+exten = _+7978[078]XXXXXX,39,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?41)
+exten = _+7978[078]XXXXXX,40,Hangup()
+exten = _+7978[078]XXXXXX,41,Dial(${gsm_8}/8${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,42,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?45)
+exten = _+7978[078]XXXXXX,43,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?45)
+exten = _+7978[078]XXXXXX,44,Hangup()
+exten = _+7978[078]XXXXXX,45,Dial(${gsm_7}/7${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,46,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?49)
+exten = _+7978[078]XXXXXX,47,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?49)
+exten = _+7978[078]XXXXXX,48,Hangup()
+exten = _+7978[078]XXXXXX,49,Dial(${gsm_6}/6${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,50,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?53)
+exten = _+7978[078]XXXXXX,51,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?53)
+exten = _+7978[078]XXXXXX,52,Hangup()
+exten = _+7978[078]XXXXXX,53,Dial(${gsm_5}/5${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,54,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?57)
+exten = _+7978[078]XXXXXX,55,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?57)
+exten = _+7978[078]XXXXXX,56,Hangup()
+exten = _+7978[078]XXXXXX,57,Dial(${gsm_4}/4${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,58,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?61)
+exten = _+7978[078]XXXXXX,59,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?61)
+exten = _+7978[078]XXXXXX,60,Hangup()
+exten = _+7978[078]XXXXXX,61,Dial(${gsm_3}/3${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,62,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?65)
+exten = _+7978[078]XXXXXX,63,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?65)
+exten = _+7978[078]XXXXXX,64,Hangup()
+exten = _+7978[078]XXXXXX,65,Dial(${gsm_2}/2${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,66,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?69)
+exten = _+7978[078]XXXXXX,67,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?69)
+exten = _+7978[078]XXXXXX,68,Hangup()
+exten = _+7978[078]XXXXXX,69,Dial(${gsm_1}/1${EXTEN:0},60,grT)
+exten = _+7978[078]XXXXXX,70,Hangup()
+; MTS RUSSIA
+exten = _+79[18][0-9]XXXXXXX,1,Dial(${gsm_18}/18${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,2,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?5)
+exten = _+79[18][0-9]XXXXXXX,3,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?5)
+exten = _+79[18][0-9]XXXXXXX,4,Hangup()
+exten = _+79[18][0-9]XXXXXXX,5,Dial(${gsm_17}/17${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,6,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?9)
+exten = _+79[18][0-9]XXXXXXX,7,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?9)
+exten = _+79[18][0-9]XXXXXXX,8,Hangup()
+exten = _+79[18][0-9]XXXXXXX,9,Dial(${gsm_16}/16${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,10,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?13)
+exten = _+79[18][0-9]XXXXXXX,11,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?13)
+exten = _+79[18][0-9]XXXXXXX,12,Hangup()
+exten = _+79[18][0-9]XXXXXXX,13,Dial(${gsm_15}/15${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,14,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?17)
+exten = _+79[18][0-9]XXXXXXX,15,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?17)
+exten = _+79[18][0-9]XXXXXXX,16,Hangup()
+exten = _+79[18][0-9]XXXXXXX,17,Dial(${gsm_14}/14${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,18,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?21)
+exten = _+79[18][0-9]XXXXXXX,19,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?21)
+exten = _+79[18][0-9]XXXXXXX,20,Hangup()
+exten = _+79[18][0-9]XXXXXXX,21,Dial(${gsm_13}/13${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,22,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?25)
+exten = _+79[18][0-9]XXXXXXX,23,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?25)
+exten = _+79[18][0-9]XXXXXXX,24,Hangup()
+exten = _+79[18][0-9]XXXXXXX,25,Dial(${gsm_12}/12${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,26,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?29)
+exten = _+79[18][0-9]XXXXXXX,27,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?29)
+exten = _+79[18][0-9]XXXXXXX,28,Hangup()
+exten = _+79[18][0-9]XXXXXXX,29,Dial(${gsm_11}/11${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,30,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?33)
+exten = _+79[18][0-9]XXXXXXX,31,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?33)
+exten = _+79[18][0-9]XXXXXXX,32,Hangup()
+exten = _+79[18][0-9]XXXXXXX,33,Dial(${gsm_10}/10${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,34,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?37)
+exten = _+79[18][0-9]XXXXXXX,35,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?37)
+exten = _+79[18][0-9]XXXXXXX,36,Hangup()
+exten = _+79[18][0-9]XXXXXXX,37,Dial(${gsm_9}/9${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,38,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?41)
+exten = _+79[18][0-9]XXXXXXX,39,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?41)
+exten = _+79[18][0-9]XXXXXXX,40,Hangup()
+exten = _+79[18][0-9]XXXXXXX,41,Dial(${gsm_8}/8${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,42,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?45)
+exten = _+79[18][0-9]XXXXXXX,43,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?45)
+exten = _+79[18][0-9]XXXXXXX,44,Hangup()
+exten = _+79[18][0-9]XXXXXXX,45,Dial(${gsm_7}/7${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,46,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?49)
+exten = _+79[18][0-9]XXXXXXX,47,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?49)
+exten = _+79[18][0-9]XXXXXXX,48,Hangup()
+exten = _+79[18][0-9]XXXXXXX,49,Dial(${gsm_6}/6${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,50,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?53)
+exten = _+79[18][0-9]XXXXXXX,51,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?53)
+exten = _+79[18][0-9]XXXXXXX,52,Hangup()
+exten = _+79[18][0-9]XXXXXXX,53,Dial(${gsm_5}/5${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,54,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?57)
+exten = _+79[18][0-9]XXXXXXX,55,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?57)
+exten = _+79[18][0-9]XXXXXXX,56,Hangup()
+exten = _+79[18][0-9]XXXXXXX,57,Dial(${gsm_4}/4${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,58,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?61)
+exten = _+79[18][0-9]XXXXXXX,59,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?61)
+exten = _+79[18][0-9]XXXXXXX,60,Hangup()
+exten = _+79[18][0-9]XXXXXXX,61,Dial(${gsm_3}/3${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,62,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?65)
+exten = _+79[18][0-9]XXXXXXX,63,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?65)
+exten = _+79[18][0-9]XXXXXXX,64,Hangup()
+exten = _+79[18][0-9]XXXXXXX,65,Dial(${gsm_2}/2${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,66,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?69)
+exten = _+79[18][0-9]XXXXXXX,67,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?69)
+exten = _+79[18][0-9]XXXXXXX,68,Hangup()
+exten = _+79[18][0-9]XXXXXXX,69,Dial(${gsm_1}/1${EXTEN:0},60,grT)
+exten = _+79[18][0-9]XXXXXXX,70,Hangup()
+; TOOL-FREE RUSSIA
+exten = _8800XXXXXXX,1,Dial(${gsm_18}/18${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,2,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?5)
+exten = _8800XXXXXXX,3,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?5)
+exten = _8800XXXXXXX,4,Hangup()
+exten = _8800XXXXXXX,5,Dial(${gsm_17}/17${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,6,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?9)
+exten = _8800XXXXXXX,7,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?9)
+exten = _8800XXXXXXX,8,Hangup()
+exten = _8800XXXXXXX,9,Dial(${gsm_16}/16${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,10,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?13)
+exten = _8800XXXXXXX,11,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?13)
+exten = _8800XXXXXXX,12,Hangup()
+exten = _8800XXXXXXX,13,Dial(${gsm_15}/15${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,14,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?17)
+exten = _8800XXXXXXX,15,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?17)
+exten = _8800XXXXXXX,16,Hangup()
+exten = _8800XXXXXXX,17,Dial(${gsm_14}/14${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,18,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?21)
+exten = _8800XXXXXXX,19,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?21)
+exten = _8800XXXXXXX,20,Hangup()
+exten = _8800XXXXXXX,21,Dial(${gsm_13}/13${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,22,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?25)
+exten = _8800XXXXXXX,23,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?25)
+exten = _8800XXXXXXX,24,Hangup()
+exten = _8800XXXXXXX,25,Dial(${gsm_12}/12${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,26,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?29)
+exten = _8800XXXXXXX,27,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?29)
+exten = _8800XXXXXXX,28,Hangup()
+exten = _8800XXXXXXX,29,Dial(${gsm_11}/11${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,30,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?33)
+exten = _8800XXXXXXX,31,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?33)
+exten = _8800XXXXXXX,32,Hangup()
+exten = _8800XXXXXXX,33,Dial(${gsm_10}/10${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,34,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?37)
+exten = _8800XXXXXXX,35,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?37)
+exten = _8800XXXXXXX,36,Hangup()
+exten = _8800XXXXXXX,37,Dial(${gsm_9}/9${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,38,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?41)
+exten = _8800XXXXXXX,39,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?41)
+exten = _8800XXXXXXX,40,Hangup()
+exten = _8800XXXXXXX,41,Dial(${gsm_8}/8${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,42,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?45)
+exten = _8800XXXXXXX,43,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?45)
+exten = _8800XXXXXXX,44,Hangup()
+exten = _8800XXXXXXX,45,Dial(${gsm_7}/7${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,46,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?49)
+exten = _8800XXXXXXX,47,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?49)
+exten = _8800XXXXXXX,48,Hangup()
+exten = _8800XXXXXXX,49,Dial(${gsm_6}/6${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,50,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?53)
+exten = _8800XXXXXXX,51,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?53)
+exten = _8800XXXXXXX,52,Hangup()
+exten = _8800XXXXXXX,53,Dial(${gsm_5}/5${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,54,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?57)
+exten = _8800XXXXXXX,55,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?57)
+exten = _8800XXXXXXX,56,Hangup()
+exten = _8800XXXXXXX,57,Dial(${gsm_4}/4${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,58,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?61)
+exten = _8800XXXXXXX,59,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?61)
+exten = _8800XXXXXXX,60,Hangup()
+exten = _8800XXXXXXX,61,Dial(${gsm_3}/3${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,62,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?65)
+exten = _8800XXXXXXX,63,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?65)
+exten = _8800XXXXXXX,64,Hangup()
+exten = _8800XXXXXXX,65,Dial(${gsm_2}/2${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,66,GotoIf($["${DIALSTATUS}" = "CONGESTION"]?69)
+exten = _8800XXXXXXX,67,GotoIf($["${DIALSTATUS}" = "CHANUNAVAIL"]?69)
+exten = _8800XXXXXXX,68,Hangup()
+exten = _8800XXXXXXX,69,Dial(${gsm_1}/1${EXTEN:0},60,grT)
+exten = _8800XXXXXXX,70,Hangup()
+; SIMFEROPOL (UA)
+exten = _10X,1,Dial(${sip_1}/${EXTEN:0},60,r)
+exten = _10X,2,Hangup()
+exten = _1[1-9]X.,1,Dial(${sip_1}/${EXTEN:0},60,r)
+exten = _1[1-9]X.,2,Hangup()
+exten = _[2-79]XXXXX,1,Dial(${sip_1}/${EXTEN:0},60,r)
+exten = _[2-79]XXXXX,2,Hangup()
+; UKRAINE
+exten = _+380XXXXXXXXX,1,Dial(${sip_1}/${EXTEN:3},60,r)
+exten = _+380XXXXXXXXX,2,Hangup()
+
+;;;;;;;;;;;
+;;; END ;;;
+;;;;;;;;;;;

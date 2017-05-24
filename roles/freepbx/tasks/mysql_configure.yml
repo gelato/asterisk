@@ -1,0 +1,19 @@
+---
+
+  - name: MySQL | Remove anonymous users
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - DELETE FROM mysql.user WHERE User=''
+    changed_when: False
+
+  # - name: MySQL | Forbid remote root login
+  #   command: 'mysql -ne "{{ item }}"'
+  #   with_items:
+  #     - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+  #   changed_when: False
+
+  - name: MySQL | Reload privilege tables
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - FLUSH PRIVILEGES
+    ignore_errors: True

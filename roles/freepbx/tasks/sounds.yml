@@ -1,0 +1,30 @@
+---
+
+  - name: Ensure asterisk sound dir is present
+    file:
+      path: /var/lib/asterisk/sounds/ru
+      owner: asterisk
+      group: asterisk
+      mode: 0775
+      state: directory
+
+  - name: Asterisk | Install Core WAV sounds
+    unarchive:
+      src : "{{ item }}"
+      dest: '/var/lib/asterisk/sounds'
+      copy: no
+    with_items: "{{ asterisk_sounds }}"
+
+
+  - name: Asterisk | Get additional and core russian sound packages
+    shell: '{{ item }}'
+    with_items:
+      - wget -q --no-check-certificate https://github.com/pbxware/asterisk-sounds/tarball/master -O- | tar xzv --strip-components 1 -C /var/lib/asterisk/sounds/ru/
+      - wget -q --no-check-certificate https://github.com/pbxware/asterisk-sounds-additional/tarball/master -O- | tar xzv --strip-components 1 -C /var/lib/asterisk/sounds/ru/
+    when: not asterisk_downloaded.stat.exists
+
+  - name: Asterisk | Install Custom WAV sounds
+    unarchive:
+      src : vars/freepbx/files/custom.tgz
+      dest: '/var/lib/asterisk/sounds'
+      copy: yes

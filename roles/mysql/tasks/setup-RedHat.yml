@@ -1,0 +1,25 @@
+---
+
+- name: Add repository
+  yum_repository:
+    name: mariadb
+    description: MariaDB
+    baseurl: http://yum.mariadb.org/10.1/centos7-amd64
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: yes
+
+- name: Ensure MySQL packages are installed.
+  yum: "name={{ item }} state=installed enablerepo={{ mysql_enablerepo }}"
+  with_items: "{{ mysql_packages }}"
+  register: rh_mysql_install_packages
+
+- name: Ensure MySQL Python libraries are installed.
+  yum: "name=MySQL-python state=installed enablerepo={{ mysql_enablerepo }}"
+
+- name: Verify mysql pid directory exists.
+  file:
+    path: /var/run/mariadb
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: 0755

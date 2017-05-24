@@ -1,0 +1,183 @@
+---
+
+  - name: OS | Install Packages
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items: '{{ debian_packages }}'
+    notify: enable mysql
+
+  - name: OS | Install Pear Packages
+    pear:
+      name: Console_Getopt
+      state: present
+
+  - name: OS | Add the Asterisk user
+    user:
+      name      : asterisk
+      comment   : 'Asterisk user'
+      createhome: no
+      system    : yes
+
+  - name: Check if iksemel already downloaded
+    stat:
+      path: /usr/src/iksemel-master
+    register: iksemel_downloaded
+
+  - name: Create dirs for Iksemel
+    file:
+      path: /usr/src/iksemel-master
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    when: not iksemel_downloaded.stat.exists
+
+  - name: Iksemel | Download and unpack
+    unarchive:
+      src :  'https://github.com/meduketto/iksemel/archive/master.zip'
+      dest: '/usr/src/iksemel-master'
+      copy: no
+    when: not iksemel_downloaded.stat.exists
+
+  - name: Iksemel | Run configure
+    command: '{{ item }}'
+    args:
+      chdir: /usr/src/iksemel-master/iksemel-master
+    with_items:
+      - ./autogen.sh
+      - ./configure
+      - make
+      - make install
+    when: not iksemel_downloaded.stat.exists
+
+  - name: Check if Jansson already downloaded
+    stat:
+      path: /usr/src/jansson-master
+    register: jansson_downloaded
+
+  - name: Create dirs for Jansson
+    file:
+      path: /usr/src/jansson-master
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    when: not jansson_downloaded.stat.exists
+
+  - name: Jansson | Download and unpack
+    unarchive:
+      src : 'https://github.com/akheron/jansson/archive/master.zip'
+      dest: '/usr/src/jansson-master'
+      copy: no
+    when: not jansson_downloaded.stat.exists
+
+  - name: Jansson | Install
+    shell: '{{ item }}'
+    args:
+      chdir: /usr/src/jansson-master/jansson-master
+    with_items:
+      - autoreconf -i
+      - ./configure --libdir=/usr/lib
+      - make
+      - make check
+      - make install
+    when: not jansson_downloaded.stat.exists
+
+  - name: Asterisk | Register the src dir into Ansible (check for presence)
+    shell: ls -d /usr/src/asterisk*
+    register: asterisk_present
+    ignore_errors: true
+
+  - name: Check if Asterisk already downloaded
+    stat:
+      path: "{{ asterisk_present.stdout }}/BUGS"
+    register: asterisk_downloaded
+
+  - name: Asterisk | Download
+    unarchive:
+      src : 'http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz'
+      dest: '/usr/src/'
+      copy: no
+    when: not asterisk_downloaded.stat.exists
+
+  - name: Asterisk | Register the src dir into Ansible
+    shell: ls -d /usr/src/asterisk*
+    register: asterisk_dir
+
+  - name: Asterisk install_prereq | Modifications to exclude libvpb-dev
+    replace:
+      dest   : "{{ asterisk_dir.stdout }}/contrib/scripts/install_prereq"
+      regexp : '(\s+)?libvpb-dev(\s+)?'
+      replace: ''
+
+  - name: Asterisk | Configure
+    shell: '{{ item }}'
+    args:
+      chdir: '{{ asterisk_dir.stdout }}'
+    with_items:
+      - ./contrib/scripts/install_prereq install
+      - ./configure --libdir=/usr/lib --with-pjproject-bundled
+      - ./contrib/scripts/get_mp3_source.sh
+    when: not asterisk_downloaded.stat.exists
+    ignore_errors: yes
+
+  - name: Asterisk | Make menuedit
+    template:
+      src : "{{ item }}"
+      dest: '{{ asterisk_dir.stdout }}'
+      mode: 0644
+    with_items:
+      - "vars/freepbx/files/menuselect.makedeps"
+      - "vars/freepbx/files/menuselect.makeopts"
+      - "vars/freepbx/files/menuselect-tree"
+
+  - name: Asterisk | Compile
+    command: ' {{ item }}'
+    args:
+      chdir: '{{ asterisk_dir.stdout }}'
+    with_items:
+      - make
+      - make install
+      - make config
+      - ldconfig
+    when: not asterisk_downloaded.stat.exists
+    notify: disable asterisk
+
+  - name: Asterisk | Edit files | asterisk.conf
+    template:
+      src : "{{ item }}"
+      dest: /etc/asterisk/confbridge.conf
+      owner: asterisk
+      group: asterisk
+      mode: 0644
+    with_items:
+      - confbridge.conf.j2
+
+  - name: Asterisk | Move custom dialplan | DP & IVR
+    template:
+      src : "{{ item }}.j2"
+      dest: "/etc/asterisk/{{ item }}"
+      owner: asterisk
+      group: asterisk
+      mode: 0644
+    with_items:
+      - extensions_custom.conf
+      - support_incoming.conf
+      - support_outgoing.conf
+
+  - name: Configure ODBC
+    template:
+      src: odbc.ini.j2
+      dest: /etc/odbc.ini
+      mode: 0775
+      owner: root
+      group: root
+
+  - name: Configure ODBCinst
+    template:
+      src: odbcinst.ini.j2
+      dest: /etc/odbcinst.ini
+      mode: 0775
+      owner: root
+      group: root

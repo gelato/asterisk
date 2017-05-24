@@ -1,0 +1,15 @@
+---
+
+  - name: Asterisk | Fix Permissions
+    file:
+      path   : "{{ item }}"
+      state  : directory
+      owner  : 'asterisk'
+      group  : 'asterisk'
+      recurse: yes
+    with_items: "{{ asterisk_dirs }}"
+
+  - name: Asterisk | Delete default dir - /var/www/html
+    file:
+      path   : '/var/www/html'
+      state  : absent

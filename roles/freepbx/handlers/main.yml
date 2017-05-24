@@ -1,0 +1,19 @@
+- name: enable mysql
+  service:
+    name   : mysql
+    enabled: yes
+    state  : restarted
+
+- name: disable asterisk
+  service:
+    name   : asterisk
+    enabled: no
+    state  : stopped
+
+- name: restart apache2
+  service:
+    name : apache2
+    state: restarted
+
+- name: start freepbx
+  command: fwconsole start

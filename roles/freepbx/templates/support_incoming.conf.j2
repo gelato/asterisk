@@ -1,0 +1,263 @@
+[test-support]
+exten = s,1,NoOp()
+exten = s,n,GotoIfTime(09:00-23:00,mon-thu,*,*?83001)
+exten = s,n,GotoIfTime(09:00-23:45,fri,*,*?83001)
+;exten = s,n,Goto(vyhodnoj,s,1)
+exten = s,n,Goto(ivr-privetsvie,s,1)
+
+exten = s,83001,Goto(ivr-privetsvie,s,1)
+
+[vyhodnoj]
+exten = s,1,Answer()
+exten = s,n,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/2)
+exten = s,n,Hangup()
+
+[holidays]
+exten = s,1,Answer()
+exten = s,n,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/3)
+exten = s,n,Hangup()
+
+[ivr-privetsvie]
+exten = s,1,Answer()
+exten = s,n,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/1)
+exten = s,n,WaitExten(7)
+exten = 1,1,Goto(ivr_press-1,s,1)
+exten = 2,1,Goto(ivr_press-2,s,1)
+exten = 3,1,Goto(support,s,1)
+
+[ivr_press-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/4)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/15)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/20)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/21)
+exten = s,n,WaitExten(7)
+exten = 1,1,Goto(ivr_press-1-1,s,1)
+exten = 2,1,Goto(ivr_press-1-2,s,1)
+exten = 3,1,Goto(support,s,1)
+exten = 4,1,Goto(support,s,1)
+
+[ivr_press-1-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/5)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/7)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/9)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/11)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/12)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/14)
+exten = s,n,WaitExten(7)
+exten = 1,1,Goto(ivr_press-1-1-1,s,1)
+exten = 2,1,Goto(ivr_press-1-1-2,s,1)
+exten = 3,1,Goto(support-goskom,s,1)
+exten = 4,1,Goto(ivr_press-1-1-4,s,1)
+exten = 5,1,Goto(ivr_press-1-1-5,s,1)
+exten = 6,1,Goto(support-goskom,s,1)
+
+[ivr_press-1-1-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/6)
+exten = s,n,Hangup()
+
+[ivr_press-1-1-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/8)
+exten = s,n,Hangup()
+
+[ivr_press-1-1-4]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/11)
+exten = s,n,Hangup()
+
+[ivr_press-1-1-5]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/13)
+exten = s,n,Hangup()
+
+[ivr_press-1-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/16)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/17)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/18)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/19)
+exten = s,n,WaitExten(7)
+exten = 1,1,Goto(ivr_press-1-2-1,s,1)
+exten = 2,1,Goto(ivr_press-1-2-2,s,1)
+exten = 3,1,Goto(ivr_press-1-2-3,s,1)
+exten = 4,1,Goto(support,s,1)
+
+[ivr_press-1-2-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(CID=+79780000431)
+exten = s,n,Set(CID1=79780000431)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CID1})
+exten = s,n,MixMonitor(/var/www/html/records/SED/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Dial(${gsm_24}/24${CID:0},60,grT)
+
+[ivr_press-1-2-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(CID=+79780000907)
+exten = s,n,Set(CID1=79780000907)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CID1})
+exten = s,n,MixMonitor(/var/www/html/records/SED/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Dial(${gsm_24}/24${CID:0},60,grT)
+
+[ivr_press-1-2-3]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(CID=+79780000484)
+exten = s,n,Set(CID1=79780000484)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CID1})
+exten = s,n,MixMonitor(/var/www/html/records/SED/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Dial(${gsm_24}/24${CID:0},60,grT)
+
+[ivr_press-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/23)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/24)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/25)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/19)
+exten = s,n,WaitExten(7)
+exten = 1,1,Goto(ivr_press-2-1,s,1)
+exten = 2,1,Goto(ivr_press-2-2,s,1)
+exten = 3,1,Goto(ivr_press-2-3,s,1)
+exten = 4,1,Goto(ivr_press-2-4,s,1)
+
+[ivr_press-2-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/27)
+exten = 1,1,Goto(ivr_press-2-1-1,s,1)
+
+[ivr_press-2-1-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/28)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/36)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/42)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/46)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/47)
+exten = 1,1,Goto(ivr_press-2-1-1-1,s,1)
+exten = 2,1,Goto(ivr_press-2-1-1-2,s,1)
+exten = 3,1,Goto(ivr_press-2-1-1-3,s,1)
+exten = 4,1,Goto(ivr_press-2-1,s,1) ;vozvrat
+exten = 0,1,Goto(support,s,1)
+
+[ivr_press-2-1-1-1]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/29)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/30)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/31)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/32)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/33)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/34)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/35)
+exten = s,n,Hangup()
+
+[ivr_press-2-1-1-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/37)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/38)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/39)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/40)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/41)
+exten = s,n,Hangup()
+
+[ivr_press-2-1-1-3]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/43)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/44)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/45)
+exten = s,n,Hangup()
+
+[ivr_press-2-2]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/48)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/49)
+exten = s,n,Hangup()
+
+[ivr_press-2-3]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/50)
+exten = s,n,Hangup()
+
+[ivr_press-2-4]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(CID=+79780000474)
+exten = s,n,Set(CID1=79780000474)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CID1})
+exten = s,n,MixMonitor(/var/www/html/records/ECP/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Dial(${gsm_24}/24${CID:0},60,grT)
+
+[support]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CALLERID(dnid)})
+exten = s,n,MixMonitor(/var/www/html/records/Operators/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Queue(queue-support)
+;exten = s,n,Set(CID=+79787379142)
+;exten = s,n,Dial(${gsm_24}/24${CID:0},60,grT)
+
+[support-goskom]
+exten = s,1,Wait(1)
+exten = s,n,Background(/var/lib/asterisk/sounds/custom/krtech-support/10)
+exten = s,n,ResetCDR()
+exten = s,n,Set(CHANNEL(language)=ru)
+exten = s,n,Set(fdate=${STRFTIME(${EPOCH},,%m-%Y)})
+exten = s,n,Set(fday=${STRFTIME(${EPOCH},,%d)})
+exten = s,n,Set(ftime=${STRFTIME(${EPOCH},,%H:%M)})
+exten = s,n,Set(fname=${fday}-${fdate}_${ftime}-${CALLERID(num)}-${CALLERID(dnid)})
+exten = s,n,MixMonitor(/var/www/html/records/Goskomregistr/${fdate}/${fday}/${fname}.wav)
+exten = s,n,Queue(queue-support-goskom)
+
+[support_incoming]
+exten = s,1,NoOp()
+exten = s,n,Answer()
+exten = s,n,Wait(2)
+exten = s,n,Playback(custom/ivr/hi_support)
+exten = s,n,GotoIfTime(09:00-23:00,mon-fri,*,*?7001)
+exten = s,n,Goto(201)
+
+exten = s,201,Wait(2)
+exten = s,202,Playback(custom/closed)
+exten = s,203,Wait(1)
+exten = s,204,Hangup()
+
+exten = s,7001,Wait(1)
+exten = s,7002,ResetCDR()
+exten = s,7003,Set(CHANNEL(language)=ru)
+exten = s,7004,Set(CALLFILENAME=${STRFTIME(${EPOCH},,%Y%m%d%H%M)}-${CALLERID(num)})
+exten = s,7005,Set(CDR(filename)=${CALLFILENAME}.wav)
+exten = s,7006,Set(MONITOR_FILENAME=${CALLFILENAME})
+exten = s,7007,Queue(queue-support)
+;exten = s,7007,Set(CID=+79787379142)
+;exten = s,7008,Dial(${gsm_24}/24${CID:0},60,grT)
+
